@@ -2,6 +2,7 @@ import json
 import os
 import pyodbc
 import datetime
+import decimal
 
 
 server = ''
@@ -57,14 +58,16 @@ for row in rows:
 
 #populate object.forecast_list with objects
 c = 0
+hours = 0
+
 for i in entryList:
-    if c == 0:
-        c += 1
-        pass
-    else:
-        for x in range (0,c-1):
+    if hours > 8: hours = 8
+    if c != 0:
+        for x in range (c-hours,c):
             i.forecast_list.append(entryList[x])
+    hours += 1
     c += 1
+
 
 
 
@@ -78,6 +81,6 @@ for x in entryList:
     print("Forecasted from: ") 
     q = ""
     for i in x.forecast_list:
-        q += i.forecastTime + " " + str(i) + "\n"
+        q += i.currentTime + " " + str(i) + "\n"
     print(q)
     print(" ")
