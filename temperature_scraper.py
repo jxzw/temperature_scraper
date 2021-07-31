@@ -5,13 +5,12 @@ import logging
 import ssl
 import json
 
-API_Key = 'd71e3c6fd748ca0f5f02fe5728a723d2'
+API_Key = ''
 
 
 
 
 logging.basicConfig(filename='log.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-
 logger = logging.getLogger("logger")
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
@@ -21,11 +20,8 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
-pyodbc.pooling = False
-
 with open('sql.json') as f:
     login = json.load(f)
-
 server = login["server"]
 database = login["database"]
 username = login["username"]
@@ -39,11 +35,6 @@ def getValues():
     weather_api_url = f"https://api.openweathermap.org/data/2.5/onecall?lat=43.658963&lon=-79.383846&appid={API_Key}"
     weather_data = requests.get(weather_api_url)
     weather_json = weather_data.json()
-
-    entryList =[]
-    forecasts = []
-
-
     returnEntry = {
         "entryTime" : time.strftime('%Y-%m-%d %H:%M:%S'),
 
@@ -58,7 +49,6 @@ def getValues():
 
         }
     }
-
     c = 0
     for i in weather_json["hourly"]:
         hourly = i["temp"]
@@ -97,6 +87,7 @@ def insertEntry():
     print(query)
 
 #connect to sql server
+pyodbc.pooling = False
 sql_connection = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
 cursor = sql_connection.cursor()
 
@@ -128,5 +119,6 @@ def loop():
         print("exception error")
         loop()
 
+# main
 loop()
 
