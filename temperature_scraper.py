@@ -90,7 +90,7 @@ def insertEntry():
 pyodbc.pooling = False
 sql_connection = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
 cursor = sql_connection.cursor()
-
+ 
 def loop():
     try:
         while True:
