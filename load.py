@@ -4,12 +4,16 @@ import pyodbc
 import datetime
 import decimal
 
+with open('sql.json') as f:
+    login = json.load(f)
 
-server = ''
-database = ''
-username = ''
-password = ""
-driver= '{ODBC Driver 17 for SQL Server}'
+server = login["server"]
+database = login["database"]
+username = login["username"]
+password = login["password"]
+driver= login["driver"]
+
+
 sql_connection = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
 cursor = sql_connection.cursor()
 
@@ -57,18 +61,17 @@ for row in rows:
     entryList.append(Entry(currentTime, forecastTime, currentTemp,[]))
 
 #populate object.forecast_list with objects
-c = 0
-hours = 0
+end = 0
+count = 0
+forecast_limit = 3
 
 for i in entryList:
-    if hours > 8: hours = 8
-    if c != 0:
-        for x in range (c-hours,c):
+    if count > forecast_limit: count = forecast_limit
+    if end != 0:
+        for x in range (end - count, end):
             i.forecast_list.append(entryList[x])
-    hours += 1
-    c += 1
-
-
+    count += 1
+    end += 1
 
 
 # confirm objects

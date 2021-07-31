@@ -3,6 +3,11 @@ import requests
 import time
 import logging
 import ssl
+import json
+
+API_Key = 'd71e3c6fd748ca0f5f02fe5728a723d2'
+
+
 
 
 logging.basicConfig(filename='log.log', encoding='utf-8', level=logging.DEBUG, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
@@ -18,13 +23,14 @@ logger.addHandler(ch)
 
 pyodbc.pooling = False
 
-API_Key = ''
-#azure sql
-server = ''
-database = ''
-username = ''
-password = ""
-driver= '{ODBC Driver 17 for SQL Server}'
+with open('sql.json') as f:
+    login = json.load(f)
+
+server = login["server"]
+database = login["database"]
+username = login["username"]
+password = login["password"]
+driver= login["driver"]
 
 
 
@@ -106,12 +112,9 @@ def loop():
         sqlstate = ex.args[1]
         ch.debug(ex)
         ch.debug(sqlstate)
-
-        print("error has occured: re-connecting to sql")
-        cursor.close()
+        print("sql error")
         sql_connection = pyodbc.connect('DRIVER='+driver+';SERVER=tcp:'+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
         cursor = sql_connection.cursor()
-            
     
         loop()
 
