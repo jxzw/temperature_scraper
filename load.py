@@ -43,22 +43,31 @@ with open('data.json', 'w') as f:
 
 
 # entry class
-entryList= []
+
 
 class Entry:
-    def __init__(self, currentTime, forecastTime, currentTemp, forecast_list):
+    def __init__(self, currentTime, forecastTime, currentTemp, forecast_list, nextEntry):
         self.currentTime = currentTime
         self.forecastTime = forecastTime
         self.currentTemp = currentTemp
         self.forecast_list = forecast_list
+        self.nextEntry = nextEntry
 
 
 #build objects
+entryList= []
+c = 0
+
 for row in rows:
+    
     currentTime = row["current_time"]
     forecastTime = row["forecast_api_time"]
     currentTemp = row["current_temp"]
-    entryList.append(Entry(currentTime, forecastTime, currentTemp,[]))
+    c += 1
+
+    if rows[c] <= len(rows):
+        nextEntry = rows[c]
+    entryList.append(Entry(currentTime, forecastTime, currentTemp,[], nextEntry))
 
 #populate object.forecast_list with objects
 end = 0
